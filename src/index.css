@@ -1,0 +1,18 @@
+/* Tailwind v4 reads class names from our source and generates their CSS. */
+@import "tailwindcss";
+
+/* Keep global rules small. Most styling lives beside the markup in className. */
+@layer base {
+  body { @apply m-0 bg-slate-50 text-slate-900 antialiased; }
+  /* A clear focus outline helps people navigating with the Tab key. */
+  :focus-visible { @apply outline-2 outline-offset-4 outline-blue-700; }
+  h2 { @apply mb-3 text-xl font-semibold; }
+  p { @apply leading-7; }
+}
+
+/* Repeated utility groups can have a reusable class, just like ordinary CSS. */
+@layer components {
+  .panel { @apply rounded-lg border border-slate-200 bg-white p-6; }
+  .text-link { @apply text-blue-800 underline underline-offset-4 hover:text-blue-600; }
+  .placeholder { @apply text-sm text-slate-600; }
+}
