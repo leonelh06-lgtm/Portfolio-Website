@@ -8,7 +8,7 @@ import ThemeSelector from './ThemeSelector';
 const navigation = [
   { to: '/', label: 'Home' }, { to: '/projects', label: 'Projects' },
   { to: '/experience', label: 'Experience' }, { to: '/github', label: 'GitHub' },
-  { to: '/contact', label: 'Contact' },
+  { to: '/resume', label: 'Resume' }, { to: '/contact', label: 'Contact' },
 ];
 export default function Layout() {
   const { pathname } = useLocation();
@@ -25,7 +25,7 @@ export default function Layout() {
       <a href="#main-content" className="skip-link">Skip to content</a>
       <header>
         <div className="masthead">
-          <div><NavLink to="/" className="site-logo">leo.space<span>★</span></NavLink><p>a small corner of the internet, by {profile.name}</p></div>
+          <div><NavLink to="/" className="site-logo">leo.Space<span>★</span></NavLink><p>a small corner of the internet, by {profile.name}</p></div>
           <ThemeSelector />
         </div>
         <nav aria-label="Main navigation" className="main-nav">

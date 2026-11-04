@@ -13,13 +13,14 @@ beforeEach(() => { vi.spyOn(window, 'scrollTo').mockImplementation(() => {}); })
 // MemoryRouter simulates URLs without a server. These checks protect the main
 // visitor journey: navigating between pages and recovering from a bad URL.
 describe('portfolio navigation', () => {
-  it('opens all five pages from shared navigation and marks the active link', async () => {
+  it('opens all pages from shared navigation and marks the active link', async () => {
     const user = userEvent.setup();
     render(<MemoryRouter><App /></MemoryRouter>);
     const nav = screen.getByRole('navigation', { name: 'Main navigation' });
     const destinations = [
       ['Projects', 'Projects'],
       ['Experience', 'Experience'], ['GitHub', 'GitHub'],
+      ['Resume', 'Resume'],
       ['Contact', 'Contact'], ['Home', profile.name],
     ];
     for (const [label, heading] of destinations) {
@@ -28,6 +29,15 @@ describe('portfolio navigation', () => {
       expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(heading);
       expect(link.getAttribute('aria-current')).toBe('page');
     }
+  });
+
+  it('offers a PDF preview and a download of the same resume', () => {
+    render(<MemoryRouter initialEntries={['/resume']}><App /></MemoryRouter>);
+    const download = screen.getByRole('link', { name: 'Download PDF' });
+    expect(download.getAttribute('download')).toBe('Leonel-Hernandez-Resume.pdf');
+    expect(screen.getByRole('img', { name: /Preview of Leonel/ }).getAttribute('src')).toBe('/resume-preview.png');
+    expect(screen.getByRole('link', { name: 'Open full-size resume PDF in a new tab' }).getAttribute('href')).toBe(download.getAttribute('href'));
+    expect(screen.getByRole('link', { name: 'Open PDF in a new tab' }).getAttribute('href')).toBe(download.getAttribute('href'));
   });
 
   it('uses the configured contact details', () => {
@@ -49,15 +59,22 @@ describe('portfolio navigation', () => {
     expect(screen.queryByRole('link', { name: 'About Me' })).toBeNull();
   });
 
+  it('starts in Midnight even when the old site automatically saved Classic', () => {
+    localStorage.clear();
+    localStorage.setItem('portfolio-theme', 'classic');
+    render(<MemoryRouter><App /></MemoryRouter>);
+    expect((screen.getByLabelText('Theme') as HTMLSelectElement).value).toBe('midnight');
+    expect(document.documentElement.dataset.theme).toBe('midnight');
+  });
+
   it('switches themes and remembers the choice after remount', async () => {
     localStorage.clear();
     const view = render(<MemoryRouter><App /></MemoryRouter>);
-    await userEvent.selectOptions(screen.getByLabelText('Theme'), 'midnight');
-    expect(document.documentElement.dataset.theme).toBe('midnight');
-    expect(localStorage.getItem('portfolio-theme')).toBe('midnight');
+    await userEvent.selectOptions(screen.getByLabelText('Theme'), 'classic');
+    expect(document.documentElement.dataset.theme).toBe('classic');
     view.unmount();
     render(<MemoryRouter><App /></MemoryRouter>);
-    expect((screen.getByLabelText('Theme') as HTMLSelectElement).value).toBe('midnight');
+    expect((screen.getByLabelText('Theme') as HTMLSelectElement).value).toBe('classic');
     await userEvent.selectOptions(screen.getByLabelText('Theme'), 'bubblegum');
     expect(document.documentElement.dataset.theme).toBe('bubblegum');
   });

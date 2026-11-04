@@ -26,7 +26,40 @@
   --link: #74388b; --shadow: #d9afc7; --dot: #ddb4cf;
 }
 @layer base {
-  body { margin: 0; background-color: var(--page); color: var(--ink); font-family: 'Nunito', sans-serif; font-size: 16px; background-image: radial-gradient(var(--dot) 1px, transparent 1px); background-size: 8px 8px; }
+  body {
+    margin: 0;
+    background-color: var(--page);
+    color: var(--ink);
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    /* Keep the decorative glow behind content, inside this stacking context. */
+    isolation: isolate;
+    /* Each small radial gradient draws a star with a soft edge. Different
+       tile sizes and offsets scatter them instead of forming a tight grid.
+       Theme variables keep the stars subtle in Daylight and Bubblegum too. */
+    background-image:
+      radial-gradient(circle, var(--ink) 0 1px, transparent 1.8px),
+      radial-gradient(circle, var(--muted) 0 .7px, transparent 1.4px),
+      radial-gradient(circle, var(--line) 0 1.3px, transparent 2.3px),
+      radial-gradient(circle, var(--muted) 0 .6px, transparent 1.2px);
+    /* Values correspond to the star layers above, in the same order. */
+    background-size: 173px 229px, 293px 167px, 419px 337px, 127px 311px;
+    background-position: 19px 37px, 83px 109px, 151px 61px, 47px 193px;
+    background-repeat: repeat;
+  }
+  body::before {
+    /* A pseudo-element is a decorative layer requiring no extra HTML.
+       Separate opacity lets just the glow pulse, leaving text and stars still.
+       Fixed positioning fills the viewport; pointer-events keeps links usable. */
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 15% 10%, var(--soft), transparent 55%);
+    opacity: .6;
+    animation: glow-pulse 8s ease-in-out infinite;
+  }
   h1, h2, h3 { font-family: 'Quicksand', sans-serif; }
   h1 { line-height: 1.2; }
   h2 { font-size: 1.35rem; font-weight: 600; }
@@ -37,7 +70,28 @@
   h1[tabindex="-1"]:focus { outline: none; }
   .masthead :focus-visible { outline-color: var(--brand-ink); }
 }
+/* One slow cycle fades up and back down without a jump at the loop boundary. */
+@keyframes glow-pulse {
+  0%, 100% { opacity: .35; }
+  50% { opacity: .95; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body::before { animation: none; }
+}
 @layer components {
+  /* A quiet frame surrounds the white paper. Responsive padding and width
+     let the full document fit on phones without a nested scrolling viewer. */
+  .resume-stage { padding: clamp(12px, 3vw, 32px); border: 1px solid var(--line); border-radius: 14px; background: var(--soft); }
+  .resume-paper { display: block; max-width: 816px; margin: 0 auto; background: white; box-shadow: 0 12px 30px #0003, 0 2px 5px #0002; }
+  /* Preserve the PDF's proportions; intrinsic dimensions prevent layout
+     shifts while the image loads. The original PDF opens when clicked. */
+  .resume-paper img { display: block; width: 100%; height: auto; }
+  /* These shared containers wrap text throughout the site. border-radius
+     curves their corners; one rule keeps every page visually consistent. */
+  .panel, .welcome-banner, .project-preview { border-radius: 14px; }
+  /* Panel headings reach the outer border using negative margins below.
+     Round their top corners too so the colored strip follows the panel. */
+  .panel > h2 { border-radius: 13px 13px 0 0; }
   .site-shell { max-width: 1060px; margin: 28px auto; border: 1px solid var(--line); background: var(--surface); box-shadow: 5px 5px 0 var(--shadow); }
   .masthead { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; padding: 24px 28px; background: var(--brand); color: var(--brand-ink); }
   .site-logo { font-family: 'Quicksand', sans-serif; font-size: 2.5rem; line-height: 1; text-decoration: none; }
@@ -55,9 +109,11 @@
   .panel > h2 { background: var(--nav); color: var(--ink); margin: -18px -18px 16px; padding: 7px 12px; border-bottom: 1px solid var(--line); }
   .profile-name { font-size: 1.8rem; font-weight: 600; margin-bottom: 8px; }
   .profile-quote { font-size: .85rem; color: var(--muted); margin-bottom: 18px; }
-  .avatar-tile { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-height: 180px; border: 3px double var(--line); background: repeating-linear-gradient(0deg, transparent, transparent 3px, var(--surface) 4px), var(--soft); }
-  .avatar-tile span { font: 4rem 'Quicksand', sans-serif; color: var(--link); }
-  .avatar-tile small { font-family: 'Quicksand', sans-serif; }
+  /* Equal width and height create a square; a 50% radius turns it into a
+     circle. overflow clips the photo to that shape, including its corners. */
+  .avatar-tile { width: 100%; max-width: 220px; aspect-ratio: 1; margin-inline: auto; border: 3px double var(--line); border-radius: 50%; overflow: hidden; background: var(--soft); }
+  /* Fill the frame without stretching the image; excess edges are cropped. */
+  .profile-photo { display: block; width: 100%; height: 100%; object-fit: cover; }
   .web-badge { display: inline-block; border: 2px outset var(--line); background: var(--soft); padding: 3px 7px; font: .8rem 'Quicksand', sans-serif; }
   .contact-grid { display: grid; gap: 14px; font-size: .85rem; }
   .detail-table > div { display: grid; grid-template-columns: 70px minmax(0, 1fr); border-bottom: 1px dotted var(--line); gap: 8px; padding: 10px 0; font-size: .85rem; }
@@ -65,6 +121,9 @@
   .welcome-banner { border: 2px solid var(--line); padding: 25px 20px; text-align: center; background: var(--soft); }
   .welcome-banner > span { font-size: .65rem; letter-spacing: .12em; }
   .welcome-banner strong { display: block; font: 2.5rem 'Quicksand', sans-serif; margin: 8px 0; color: var(--link); }
+  /* Inline SVG scales cleanly alongside the title. Its transparent crescent
+     cutout works on every theme; the glow follows the shape of the moon. */
+  .welcome-moon { display: inline-block; width: 1em; height: 1em; margin-left: .2em; vertical-align: -.12em; fill: #f2ce70; filter: drop-shadow(0 0 7px #f2c65b55); }
   .welcome-banner p { font-size: .85rem; }
   .section-subtitle { color: var(--accent); font-size: 1.25rem; margin-bottom: 8px; }
   .text-link { color: var(--link); text-decoration: underline; text-underline-offset: 3px; }

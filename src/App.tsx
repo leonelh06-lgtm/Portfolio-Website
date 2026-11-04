@@ -5,6 +5,7 @@ import ProjectsPage from './pages/ProjectsPage';
 import ExperiencePage from './pages/ExperiencePage';
 import GitHubPage from './pages/GitHubPage';
 import ContactPage from './pages/ContactPage';
+import ResumePage from './pages/ResumePage';
 import NotFoundPage from './pages/NotFoundPage';
 
 // A component is a function that returns JSX. "export default" makes it
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="experience" element={<ExperiencePage />} />
         <Route path="github" element={<GitHubPage />} />
         <Route path="contact" element={<ContactPage />} />
+        <Route path="resume" element={<ResumePage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
