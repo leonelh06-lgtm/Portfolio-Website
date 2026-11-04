@@ -1,18 +1,98 @@
-/* Tailwind v4 reads class names from our source and generates their CSS. */
+/* These web fonts have local fallbacks when the font service is unavailable. */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
-/* Keep global rules small. Most styling lives beside the markup in className. */
+/* CSS variables are named values. Each theme overrides the same names, so
+   changing data-theme on <html> recolors every component without duplicating it. */
+:root, [data-theme="classic"] {
+  color-scheme: light;
+  --page: #e9edf3; --surface: #ffffff; --ink: #243850; --muted: #50647b;
+  --brand: #234f91; --brand-ink: #ffffff; --nav: #d6e6f8;
+  --line: #87a8ce; --soft: #eef5ff; --accent: #ac481c;
+  --link: #184e9c; --shadow: #bcc9dc; --dot: #bdcbdc;
+}
+[data-theme="midnight"] {
+  color-scheme: dark;
+  --page: #101827; --surface: #1b2940; --ink: #e3edf8; --muted: #b5c6dc;
+  --brand: #203d59; --brand-ink: #e4faff; --nav: #263d54;
+  --line: #587c99; --soft: #24364c; --accent: #f5c78a;
+  --link: #92e5f5; --shadow: #080e18; --dot: #304259;
+}
+[data-theme="bubblegum"] {
+  color-scheme: light;
+  --page: #f6e3ef; --surface: #fffaf1; --ink: #523459; --muted: #745674;
+  --brand: #8e3968; --brand-ink: #fff8ed; --nav: #f4d1e5;
+  --line: #bb7da3; --soft: #fae8ef; --accent: #864720;
+  --link: #74388b; --shadow: #d9afc7; --dot: #ddb4cf;
+}
 @layer base {
-  body { @apply m-0 bg-slate-50 text-slate-900 antialiased; }
-  /* A clear focus outline helps people navigating with the Tab key. */
-  :focus-visible { @apply outline-2 outline-offset-4 outline-blue-700; }
-  h2 { @apply mb-3 text-xl font-semibold; }
-  p { @apply leading-7; }
+  body { margin: 0; background-color: var(--page); color: var(--ink); font-family: 'Nunito', sans-serif; font-size: 16px; background-image: radial-gradient(var(--dot) 1px, transparent 1px); background-size: 8px 8px; }
+  h1, h2, h3 { font-family: 'Quicksand', sans-serif; }
+  h1 { line-height: 1.2; }
+  h2 { font-size: 1.35rem; font-weight: 600; }
+  p { line-height: 1.7; }
+  :focus-visible { outline: 3px solid var(--link); outline-offset: 4px; }
+  /* Route headings receive focus in code; links and form controls retain a
+     visible keyboard outline. On the dark masthead use a contrasting color. */
+  h1[tabindex="-1"]:focus { outline: none; }
+  .masthead :focus-visible { outline-color: var(--brand-ink); }
+}
+@layer components {
+  .site-shell { max-width: 1060px; margin: 28px auto; border: 1px solid var(--line); background: var(--surface); box-shadow: 5px 5px 0 var(--shadow); }
+  .masthead { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; padding: 24px 28px; background: var(--brand); color: var(--brand-ink); }
+  .site-logo { font-family: 'Quicksand', sans-serif; font-size: 2.5rem; line-height: 1; text-decoration: none; }
+  .site-logo span { margin-left: 10px; font-size: 1.6rem; }
+  .masthead p { font-size: .8rem; margin-top: 8px; }
+  .theme-control { display: flex; gap: 8px; align-items: center; font-size: .85rem; }
+  .theme-control select { padding: 7px 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 0; }
+  .main-nav { display: flex; flex-wrap: wrap; padding: 0 16px; background: var(--nav); border-block: 1px solid var(--line); }
+  .main-nav a { padding: 12px 17px; font-weight: 800; color: var(--link); font-size: .9rem; border-inline-end: 1px solid var(--line); }
+  .main-nav a:hover, .main-nav a[aria-current="page"] { background: var(--surface); text-decoration: underline; text-underline-offset: 4px; }
+  .site-content { padding: 24px; min-height: 65vh; overflow-wrap: anywhere; }
+  .page-trail { color: var(--muted); font-size: .75rem; margin-bottom: 20px; }
+  .profile-grid { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 24px; align-items: start; }
+  .panel { border: 1px solid var(--line); background: var(--surface); padding: 18px; box-shadow: 2px 2px 0 var(--soft); }
+  .panel > h2 { background: var(--nav); color: var(--ink); margin: -18px -18px 16px; padding: 7px 12px; border-bottom: 1px solid var(--line); }
+  .profile-name { font-size: 1.8rem; font-weight: 600; margin-bottom: 8px; }
+  .profile-quote { font-size: .85rem; color: var(--muted); margin-bottom: 18px; }
+  .avatar-tile { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-height: 180px; border: 3px double var(--line); background: repeating-linear-gradient(0deg, transparent, transparent 3px, var(--surface) 4px), var(--soft); }
+  .avatar-tile span { font: 4rem 'Quicksand', sans-serif; color: var(--link); }
+  .avatar-tile small { font-family: 'Quicksand', sans-serif; }
+  .web-badge { display: inline-block; border: 2px outset var(--line); background: var(--soft); padding: 3px 7px; font: .8rem 'Quicksand', sans-serif; }
+  .contact-grid { display: grid; gap: 14px; font-size: .85rem; }
+  .detail-table > div { display: grid; grid-template-columns: 70px minmax(0, 1fr); border-bottom: 1px dotted var(--line); gap: 8px; padding: 10px 0; font-size: .85rem; }
+  .detail-table dt { color: var(--muted); font-weight: 800; }
+  .welcome-banner { border: 2px solid var(--line); padding: 25px 20px; text-align: center; background: var(--soft); }
+  .welcome-banner > span { font-size: .65rem; letter-spacing: .12em; }
+  .welcome-banner strong { display: block; font: 2.5rem 'Quicksand', sans-serif; margin: 8px 0; color: var(--link); }
+  .welcome-banner p { font-size: .85rem; }
+  .section-subtitle { color: var(--accent); font-size: 1.25rem; margin-bottom: 8px; }
+  .text-link { color: var(--link); text-decoration: underline; text-underline-offset: 3px; }
+  .text-link:hover { text-decoration-thickness: 2px; }
+  .placeholder, .muted-text { color: var(--muted); }
+  .placeholder { font-size: .875rem; }
+  .project-preview { display: flex; align-items: center; gap: 16px; color: var(--link); border: 1px dotted var(--line); padding: 14px; background: var(--soft); }
+  .project-preview:hover { outline: 1px solid var(--link); }
+  .project-pixel { flex-shrink: 0; display: grid; place-items: center; width: 64px; height: 64px; background: var(--nav); border: 2px solid var(--line); font: 1.5rem 'Quicksand', sans-serif; }
+  .project-preview small { display: block; color: var(--muted); margin-top: 4px; }
+  .retro-button { background: var(--nav); border: 2px outset var(--line); color: var(--link); padding: 7px 12px; font-weight: 800; font-size: .85rem; }
+  .retro-button:active { border-style: inset; }
+  .site-footer { padding: 22px; border-top: 1px solid var(--line); background: var(--soft); color: var(--muted); text-align: center; font-size: .75rem; }
+  .skip-link { position: absolute; left: -10000px; }
+  .skip-link:focus { position: fixed; top: 8px; left: 8px; z-index: 10; padding: 12px; background: var(--surface); color: var(--link); }
+}
+/* Existing pages use these utilities; override their fixed colors with tokens
+   so Midnight also stays readable on the Projects and Experience pages. */
+@layer utilities {
+  .text-slate-600 { color: var(--muted); }
+  .bg-slate-100 { background-color: var(--soft); }
+}
+@media (max-width: 740px) {
+  .site-shell { margin: 0; border-inline: 0; box-shadow: none; }
+  .profile-grid { grid-template-columns: minmax(0, 1fr); }
+  .masthead { padding: 22px 18px; }
+  .site-content { padding: 18px; }
+  .main-nav { padding: 0; }
+  .main-nav a { padding: 12px; }
 }
 
-/* Repeated utility groups can have a reusable class, just like ordinary CSS. */
-@layer components {
-  .panel { @apply rounded-lg border border-slate-200 bg-white p-6; }
-  .text-link { @apply text-blue-800 underline underline-offset-4 hover:text-blue-600; }
-  .placeholder { @apply text-sm text-slate-600; }
-}

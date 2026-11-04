@@ -1,6 +1,6 @@
 # Student portfolio foundation
 
-Six pages built with React, TypeScript, Vite, React Router, and Tailwind CSS.
+Five pages built with React, TypeScript, Vite, React Router, and Tailwind CSS.
 This first phase provides content structure and simple responsive styling.
 Personal details and sample entries are deliberately placeholders.
 
@@ -69,7 +69,7 @@ package.json             Dependencies and terminal commands
 
 When you visit `/projects`, React Router selects ProjectsPage. The shared Layout
 stays on screen and its `<Outlet />` renders that page. There is one HTML entry
-document, even though visitors can navigate to six distinct URLs.
+document, while visitors navigate between distinct URLs.
 
 ## Suggested reading order
 
@@ -116,7 +116,7 @@ There is no tailwind.config.js required for this basic Tailwind v4 setup.
 - Edit `src/data/profile.ts` first. Add your actual name, university, email,
   and full `https://` profile URLs. Empty contact values display "coming soon"
   rather than linking to a made-up address.
-- Edit AboutPage to describe your coursework and interests.
+- Edit HomePage to describe your education, coursework and interests.
 - Replace the sample object in ProjectsPage with real work. Add more objects to
   display more cards. Give each project a unique id and list each technology once.
 - Replace the sample ExperiencePage entry with work, clubs, or team experience.
@@ -137,7 +137,7 @@ npm run build
 npm run preview
 ```
 
-The tests exercise navigation, active links, unset contact details, and unknown
+The tests exercise navigation, active links, configured contact details, theme persistence, the old About redirect, and unknown
 URLs. The build checks TypeScript first, then creates production files in dist/.
 Preview serves that built output locally; it does not publish the website.
 
@@ -159,3 +159,23 @@ Deployment and visual design are later phases.
 - [React Router: declarative setup](https://reactrouter.com/start/declarative/installation)
 - [Vite guide](https://vite.dev/guide/)
 - [Tailwind documentation](https://tailwindcss.com/docs/installation/using-vite)
+
+## Retro layout and themes
+
+Home now includes About, education and interests. Edit those in
+`src/pages/HomePage.tsx`; `/about` redirects home to preserve old links.
+The site has five navigation destinations rather than six.
+
+`src/components/ThemeSelector.tsx` stores the selected theme in React state.
+An effect writes `data-theme` onto the HTML element and saves `portfolio-theme`
+in localStorage. That browser storage remembers the choice between visits.
+Invalid stored names fall back to Classic; blocked storage doesn't break switching.
+
+In `src/index.css`, Classic, Midnight and Bubblegum each define the same CSS
+variables. For example, `background: var(--surface)` uses the active theme's panel
+color. Add a new theme by adding its option/type in ThemeSelector and a matching
+`[data-theme="name"]` block. Keep text and focus indicators clearly contrasted.
+The imported Google Fonts supply Quicksand for headings and Nunito for text;
+sans-serif fallbacks render if the font service is unavailable.
+
+

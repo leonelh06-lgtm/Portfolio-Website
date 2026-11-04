@@ -9,7 +9,7 @@ export default function PageHeading({ title, description }: PageHeadingProps) {
   return (
     <header className="mb-8">
       <h1 tabIndex={-1} className="mb-3 text-3xl font-bold sm:text-4xl">{title}</h1>
-      <p className="max-w-2xl text-slate-600">{description}</p>
+      <p className="max-w-2xl muted-text">{description}</p>
     </header>
   );
 }

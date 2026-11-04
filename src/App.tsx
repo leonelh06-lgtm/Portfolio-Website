@@ -1,7 +1,6 @@
-import { Route, Routes } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
-import AboutPage from './pages/AboutPage';
 import ProjectsPage from './pages/ProjectsPage';
 import ExperiencePage from './pages/ExperiencePage';
 import GitHubPage from './pages/GitHubPage';
@@ -17,7 +16,8 @@ export default function App() {
           "index" means the home page; "*" catches every unmatched URL. */}
       <Route element={<Layout />}>
         <Route index element={<HomePage />} />
-        <Route path="about" element={<AboutPage />} />
+        {/* Keep old bookmarks useful after merging About into Home. */}
+        <Route path="about" element={<Navigate to="/" replace />} />
         <Route path="projects" element={<ProjectsPage />} />
         <Route path="experience" element={<ExperiencePage />} />
         <Route path="github" element={<GitHubPage />} />
