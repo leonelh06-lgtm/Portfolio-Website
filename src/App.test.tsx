@@ -13,6 +13,19 @@ beforeEach(() => { vi.spyOn(window, 'scrollTo').mockImplementation(() => {}); })
 // MemoryRouter simulates URLs without a server. These checks protect the main
 // visitor journey: navigating between pages and recovering from a bad URL.
 describe('portfolio navigation', () => {
+  it('shows project photos in setup, keyboard, then Jetson order', () => {
+    render(<MemoryRouter initialEntries={['/projects']}><App /></MemoryRouter>);
+    const gallery = screen.getByRole('group', { name: 'Guiding Hands photos' });
+    const photos = within(gallery).getAllByRole('img');
+    expect(photos.map((photo) => photo.getAttribute('src'))).toEqual([
+      '/Empty Office Rig with Knight Hacks Logo.png',
+      '/projects/guiding-hands-keyboard.jpg',
+      '/projects/guiding-hands-jetson.jpg',
+    ]);
+    // Visitors can open each original, not just the smaller gallery thumbnail.
+    expect(within(gallery).getAllByRole('link').map((link) => link.getAttribute('href')))
+      .toEqual(photos.map((photo) => photo.getAttribute('src')));
+  });
   it('opens all pages from shared navigation and marks the active link', async () => {
     const user = userEvent.setup();
     render(<MemoryRouter><App /></MemoryRouter>);

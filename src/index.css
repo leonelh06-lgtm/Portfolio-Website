@@ -79,6 +79,28 @@
   body::before { animation: none; }
 }
 @layer components {
+  /* flex-wrap moves dates below the organization when space gets tight.
+     Theme variables keep these details readable in all three palettes. */
+  .experience-meta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 20px; }
+  .experience-dates { color: var(--muted); font-size: .875rem; }
+  .experience-category { display: inline-block; margin-top: 12px; padding: 3px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--soft); color: var(--link); font-size: .75rem; font-weight: 700; }
+  /* Equal-height frames keep portrait and landscape photos aligned. contain
+     fits the entire photo inside each frame, rather than cutting off edges. */
+  .project-gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-block: 20px; }
+  .project-gallery a { display: block; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--soft); }
+  .project-gallery img { display: block; width: 100%; height: 240px; object-fit: contain; }
+  .project-gallery a:hover { outline: 2px solid var(--link); outline-offset: 2px; }
+  /* Flexbox puts each thumbnail beside its text group. flex-shrink: 0 keeps
+     images equal in size; min-width: 0 lets long text wrap on small screens. */
+  .project-showcase { display: grid; gap: 18px; }
+  .showcase-card { display: flex; align-items: center; gap: 19px; color: var(--ink); }
+  /* height: auto preserves the original photo's proportions without cropping.
+     The percentage cap leaves room for text on narrow screens. */
+  .showcase-card img { width: 160px; max-width: 40%; height: auto; flex-shrink: 0; border: 1px solid var(--line); border-radius: 14px; background: var(--soft); }
+  .showcase-copy { min-width: 0; }
+  .showcase-card h3 { font-size: 1.38rem; font-weight: 700; color: var(--link); }
+  .showcase-card p { margin-top: 4px; font-size: 1.104rem; color: var(--muted); line-height: 1.5; }
+  .showcase-card:hover h3 { text-decoration: underline; text-underline-offset: 3px; }
   /* A quiet frame surrounds the white paper. Responsive padding and width
      let the full document fit on phones without a nested scrolling viewer. */
   .resume-stage { padding: clamp(12px, 3vw, 32px); border: 1px solid var(--line); border-radius: 14px; background: var(--soft); }
@@ -147,11 +169,46 @@
   .bg-slate-100 { background-color: var(--soft); }
 }
 @media (max-width: 740px) {
+  .project-gallery { grid-template-columns: minmax(0, 1fr); }
   .site-shell { margin: 0; border-inline: 0; box-shadow: none; }
   .profile-grid { grid-template-columns: minmax(0, 1fr); }
   .masthead { padding: 22px 18px; }
   .site-content { padding: 18px; }
   .main-nav { padding: 0; }
   .main-nav a { padding: 12px; }
+}
+
+/* Motion uses transform and opacity rather than changing widths or margins,
+   so content stays in place while the browser animates its visual appearance. */
+@keyframes panel-arrive {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes moon-drift {
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-5px) rotate(5deg); }
+}
+/* Opt into movement only when the OS says it is welcome. Content is visible
+   by default, including when animations are unsupported or turned off. */
+@media (prefers-reduced-motion: no-preference) {
+  .panel, .welcome-banner { animation: panel-arrive 450ms ease-out backwards; }
+  .profile-grid .panel:nth-child(2) { animation-delay: 70ms; }
+  .profile-grid .panel:nth-child(3) { animation-delay: 140ms; }
+  .profile-grid .panel:nth-child(4) { animation-delay: 210ms; }
+  .welcome-moon { animation: moon-drift 5s ease-in-out infinite; }
+  .showcase-card, .retro-button, .project-gallery a {
+    transition: transform 180ms ease, box-shadow 180ms ease;
+  }
+  .main-nav a { transition: background-color 180ms ease, color 180ms ease; }
+  .site-logo span { display: inline-block; transition: transform 300ms ease; }
+  .site-logo:hover span, .site-logo:focus-visible span { transform: rotate(35deg); }
+  .showcase-card:focus-visible, .project-gallery a:focus-visible { transform: translateY(-3px); }
+  .retro-button:focus-visible { transform: translateY(-2px); }
+}
+/* Hover motion applies only to devices with a mouse, avoiding sticky hover
+   states on phones. Keyboard users get the focus treatment above. */
+@media (prefers-reduced-motion: no-preference) and (hover: hover) {
+  .showcase-card:hover, .project-gallery a:hover { transform: translateY(-3px); }
+  .retro-button:hover { transform: translateY(-2px); box-shadow: 0 4px 0 var(--shadow); }
 }
 

@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { profile } from "../data/profile";
+import { featuredProjects } from "../data/featuredProjects";
 
 export default function HomePage() {
   return (
@@ -86,7 +87,7 @@ export default function HomePage() {
                 <path d="M23 3a13 13 0 1 0 6 21A13 13 0 0 1 23 3Z" />
               </svg>
             </strong>
-            <p>Computer science. Creative ideas. One project at a time.</p>
+            <p>Enjoy :)</p>
           </div>
           <section className="panel" aria-labelledby="about-title">
             <h2 id="about-title">Me</h2>
@@ -110,24 +111,36 @@ export default function HomePage() {
               </li>
               <li>
                 <p>
-                  I’m interested in full stack development and growing my skills
-                  by building software.
+                  I’m interested in full stack development, AI/ML and growing my
+                  skills by building software.
                 </p>
               </li>
             </ul>
           </section>
           <section className="panel" aria-labelledby="projects-title">
             <h2 id="projects-title">Top projects</h2>
-            <p className="mb-4">A little space for the things I’m building.</p>
-            <Link className="project-preview" to="/projects">
-              <span className="project-pixel" aria-hidden="true">
-                &lt;/&gt;
-              </span>
-              <span>
-                <strong>Explore my projects</strong>
-                <small>Code, ideas, and lessons along the way →</small>
-              </span>
-            </Link>
+            <p className="mb-4">A little space for the things I've built.</p>
+            {/* slice(0, 3) limits the showcase to three entries. map creates a
+                card for each one; key gives React a stable identity per card. */}
+            <div className="project-showcase">
+              {featuredProjects.slice(0, 3).map((project) => (
+                <Link key={project.id} className="showcase-card" to="/projects">
+                  <img
+                    src={project.image}
+                    alt={project.imageAlt}
+                    width={project.imageWidth}
+                    height={project.imageHeight}
+                    loading="lazy"
+                  />
+                  {/* Group the text so Flexbox places it beside the image,
+                      while the title and subtitle stay stacked together. */}
+                  <div className="showcase-copy">
+                    <h3>{project.title}</h3>
+                    <p>{project.subtitle}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </section>
           <section className="panel" aria-labelledby="connections-title">
             <h2 id="connections-title">Let’s connect</h2>

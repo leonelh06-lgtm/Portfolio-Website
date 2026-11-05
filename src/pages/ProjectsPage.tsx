@@ -1,12 +1,35 @@
 import PageHeading from "../components/PageHeading";
+import { featuredProjects } from "../data/featuredProjects";
 
-// This is a sample content structure, not a claim about completed work.
-// Add more objects to this array as you add real projects. TypeScript infers
-// (figures out) its shape from these values, including technologies as a list.
+// Add an object for each project. The photos array controls gallery order:
+// setup first, keyboard second, and Jetson close-up third.
 const projects = [
   {
     id: "guiding-hands",
     title: "Guiding Hands",
+    // Property names are case-sensitive: this must match project.githubUrl below.
+    githubUrl: "https://github.com/leonelh06-lgtm/Knight-Hacks-IX",
+    photos: [
+      {
+        // Reuse Home's image path so replacing the featured photo updates both.
+        src: featuredProjects[0].image,
+        alt: 'Guiding Hands projector and whiteboard setup',
+        width: featuredProjects[0].imageWidth,
+        height: featuredProjects[0].imageHeight,
+      },
+      {
+        src: '/projects/guiding-hands-keyboard.jpg',
+        alt: 'Hands at a keyboard beside the connected Jetson development setup',
+        width: 6000,
+        height: 4000,
+      },
+      {
+        src: '/projects/guiding-hands-jetson.jpg',
+        alt: 'Close-up of the Jetson Orin Nano with its fan and connected cables',
+        width: 6000,
+        height: 4000,
+      },
+    ],
     summary: (
       <>
         Guiding Hands is a
@@ -17,10 +40,10 @@ const projects = [
       </>
     ),
     technologies: [
-      "Google Mediapipe",
-      "Orin Jetson Nano",
       "Python",
       "Javascript",
+      "Orin Jetson Nano",
+      "Google Mediapipe",
     ],
   },
 ];
@@ -32,13 +55,20 @@ export default function ProjectsPage() {
         title="Projects"
         description="A place to share what I build and explain how it works."
       />
-      <p className="placeholder mb-5">
-        Sample entry — replace with your own work.
-      </p>
-      <div className="grid gap-6 md:grid-cols-2">
+
+      <div className="grid gap-6">
         {projects.map((project) => (
           <article key={project.id} className="panel">
             <h2>{project.title}</h2>
+            {/* map preserves the array order. Each photo opens at full size;
+                contain in CSS shows the whole image without cropping it. */}
+            <div className="project-gallery" role="group" aria-label={`${project.title} photos`}>
+              {project.photos.map((photo) => (
+                <a key={photo.src} href={photo.src} target="_blank" rel="noopener noreferrer" aria-label={`Open full-size photo: ${photo.alt} (new tab)`}>
+                  <img src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} loading="lazy" />
+                </a>
+              ))}
+            </div>
             <p>{project.summary}</p>
             <ul aria-label="Technologies" className="my-4 flex flex-wrap gap-2">
               {project.technologies.map((technology) => (
@@ -55,6 +85,17 @@ export default function ProjectsPage() {
               hardware acceleration running locally on Jetson Orin Nano as well
               as worked on web integration
             </p>
+            {/* Only display the link when this project has a repository URL. */}
+            {project.githubUrl && (
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-link mt-4 inline-block"
+              >
+                View on GitHub ↗
+              </a>
+            )}
           </article>
         ))}
       </div>
